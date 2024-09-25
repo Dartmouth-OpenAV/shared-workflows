@@ -1,8 +1,7 @@
 name: Build Release Docker Image
 
 on:
-  release:
-    types: ["created"]
+  workflow_call:
 
 jobs:
 
@@ -31,7 +30,7 @@ jobs:
         IMAGE=$(echo $IMAGE | tr '[A-Z]' '[a-z]')
         echo IMAGE: $IMAGE
         docker build . --file Dockerfile --no-cache -t $IMAGE --label RELEASE_TAG=${{github.event.release.tag_name}} --tag $IMAGE:${{github.event.release.tag_name}}
-        docker push $IMAGE:latest
+        docker push $IMAGE:${{github.event.release.tag_name}}
 
 
   build_raspberrypi:
@@ -58,5 +57,5 @@ jobs:
         IMAGE=ghcr.io/${{github.repository}}
         IMAGE=$(echo $IMAGE | tr '[A-Z]' '[a-z]')
         echo IMAGE: $IMAGE
-        docker build . --file Dockerfile --no-cache -t $IMAGE --label RELEASE_TAG=${{github.event.release.tag_name}} --tag $IMAGE:${{github.event.release.tag_name}}
-        docker push $IMAGE:latest_raspi64
+        docker build . --file Dockerfile --no-cache -t $IMAGE --label RELEASE_TAG=${{github.event.release.tag_name}} --tag $IMAGE:${{github.event.release.tag_name}}_raspi64
+        docker push $IMAGE:${{github.event.release.tag_name}}_raspi64
