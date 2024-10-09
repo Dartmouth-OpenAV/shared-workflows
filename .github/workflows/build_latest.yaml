@@ -2,6 +2,11 @@ name: Build Latest Docker Image
 
 on:
   workflow_call:
+    inputs:
+      extra-labels:
+        description: 'Optional extra labels for the Docker build command'
+        required: False
+        type: 'string'
 
 jobs:
 
@@ -31,7 +36,7 @@ jobs:
         IMAGE=ghcr.io/${{github.repository}}
         IMAGE=$(echo $IMAGE | tr '[A-Z]' '[a-z]')
         echo IMAGE: $IMAGE
-        docker build . --file Dockerfile --no-cache -t $IMAGE --label CI_COMMIT_SHA=${{github.sha}} --build-arg VERSION=latest --tag $IMAGE:latest
+        docker build . --file Dockerfile --no-cache -t $IMAGE ${{inputs.extra-labels}} --label CI_COMMIT_SHA=${{github.sha}} --tag $IMAGE:latest
         docker push $IMAGE:latest
 
 
@@ -61,5 +66,5 @@ jobs:
         IMAGE=ghcr.io/${{github.repository}}
         IMAGE=$(echo $IMAGE | tr '[A-Z]' '[a-z]')
         echo IMAGE: $IMAGE
-        docker build . --file Dockerfile --no-cache -t $IMAGE --label CI_COMMIT_SHA=${{github.sha}} --build-arg VERSION=latest --tag $IMAGE:latest_raspi64
+        docker build . --file Dockerfile --no-cache -t $IMAGE ${{inputs.extra-labels}} --label CI_COMMIT_SHA=${{github.sha}} --tag $IMAGE:latest_raspi64
         docker push $IMAGE:latest_raspi64
