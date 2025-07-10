@@ -7,7 +7,14 @@ on:
         description: 'Optional extra labels for the Docker build command'
         required: False
         type: 'string'
-
+      artifact-name:
+        required: false
+        type: string
+      artifact-path:
+        required: false
+        type: string
+        default: "./"
+      
 jobs:
 
   build:
@@ -23,6 +30,19 @@ jobs:
       uses: actions/checkout@main
       with:
         submodules: 'true'
+
+    - name: Download artifact (default path)
+      if: ${{ inputs['artifact-name'] != '' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs['artifact-name'] }}
+        path: "./_temp-artifact"
+
+    - name: Move artifact to desired folder
+      if: ${{ inputs['artifact-name'] != '' }}
+      run: |
+        mkdir -p "${{ inputs['artifact-path'] }}"
+        mv ./_temp-artifact/* "${{ inputs['artifact-path'] }}/"
 
     - name: 'Login to GitHub Container Registry'
       uses: docker/login-action@v3
@@ -53,6 +73,19 @@ jobs:
       uses: actions/checkout@main
       with:
         submodules: 'true'
+    
+    - name: Download artifact (default path)
+      if: ${{ inputs['artifact-name'] != '' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs['artifact-name'] }}
+        path: "./_temp-artifact"
+
+    - name: Move artifact to desired folder
+      if: ${{ inputs['artifact-name'] != '' }}
+      run: |
+        mkdir -p "${{ inputs['artifact-path'] }}"
+        mv ./_temp-artifact/* "${{ inputs['artifact-path'] }}/"
 
     - name: 'Login to GitHub Container Registry'
       uses: docker/login-action@v3
